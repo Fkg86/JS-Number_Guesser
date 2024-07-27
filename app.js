@@ -1,0 +1,82 @@
+/*
+Oyunun Fonksiyonları:
+- Oyuncu min ve max değerleri arasında olan sayıyı tahmin etmeli
+- Oyuncunun belirli bir tahmin hakkı olacak
+- Oyuncunun kazanma durumunu bildir
+- Tekrar denemesi için bir seçenek ver
+*/
+
+// Arayüz Elemanları
+const game = document.querySelector("#game"),
+  guessBtn = document.querySelector("#guess-btn"),
+  guessInput = document.querySelector("#guess-input"),
+  message = document.querySelector(".message"),
+  minNum = document.querySelector(".min-num"),
+  maxNum = document.querySelector(".max-num");
+
+// Oyunda kullanılacak değerler
+let min = 1,
+  max = 10,
+  winningNumber = getRandomNum(min, max),
+  guessesLeft = 3;
+
+// min ve max değerlerini arayüze gönder
+minNum.textContent = min;
+maxNum.textContent = max;
+
+// Yapılan tahmini izle
+guessBtn.addEventListener("click", () => {
+  // input içerisindeki veriyi al ve sayıya çevir
+  let guess = parseInt(guessInput.value);
+
+  // oyunu kazandı mı kontrol et
+  if (guess === winningNumber) {
+    // Oyunu kazandı
+    gameOver(true, `KAZANDIN! Doğru tahmin: ${winningNumber}`);
+  } else {
+    // Yanlış sayı tahmini
+    guessesLeft--;
+
+    if (guessesLeft === 0) {
+      // Oyunu kaybetti
+      gameOver(false, `KAYBETTİN! Doğru tahmin: ${winningNumber}`);
+    } else {
+      // kalan hak 0 dan fazla ise
+      // çerçeveyi kırmızı yap
+      guessInput.style.borderColor = "red";
+
+      // inputu temizle
+      guessInput.value = "";
+
+      // kullanıcay kaç hakkının kaldığını söyle
+      setMessage(`${guess} doğru değil, ${guessesLeft} hakkınız kaldı`, "red");
+    }
+  }
+});
+
+// Oyunu bitirme
+function gameOver(won, msg) {
+  let color = won ? "green" : "red";
+
+  // inputu iptal et
+  guessInput.disabled = true;
+
+  // inputun çerçevesini değiştir
+  guessInput.style.borderColor = color;
+
+  // kullanıcıyı bilgilendir
+  setMessage(msg, color);
+}
+
+// Kullanıcıya mesaj verme
+function setMessage(msg, color) {
+  message.textContent = msg;
+  message.style.color = color;
+}
+
+// rastgele sayı bulma methodu
+function getRandomNum(min, max) {
+  let random = Math.floor(Math.random() * (max - min + 1) + min);
+  console.log(random);
+  return random;
+}
